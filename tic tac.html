@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stylish Tic Tac Toe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.4);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0,255,255,0.5);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px cyan;
+    }
+
+    select, button {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: none;
+      margin: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    select {
+      background: #2c5364;
+      color: #fff;
+    }
+
+    button {
+      background: linear-gradient(45deg, cyan, #00f2fe);
+      color: #000;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px cyan;
+    }
+
+    .game-board {
+      display: grid;
+      margin: 20px auto;
+      gap: 5px;
+      max-width: 90vmin;
+    }
+
+    .cell {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid cyan;
+      border-radius: 12px;
+      font-size: 2rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .cell:hover { background: rgba(0,255,255,0.2); }
+
+    .winner {
+      background: linear-gradient(45deg, #00f2fe, #4facfe);
+      color: #000 !important;
+      animation: glow 1s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 10px cyan; }
+      to   { box-shadow: 0 0 20px #00f2fe; }
+    }
+
+    .timers {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .timer {
+      background: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+      min-width: 80px;
+    }
+
+    .low-time { color: #ff4b5c; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic Tac Toe</h1>
+    <div>
+      <label for="boardSize">Choose Board:</label>
+      <select id="boardSize">
+        <option value="3">3 × 3</option>
+        <option value="6">6 × 6</option>
+        <option value="8">8 × 8</option>
+      </select>
+      <button id="startBtn">Start Game</button>
+    </div>
+    <div class="timers">
+      <div id="timerX" class="timer">X: 0</div>
+      <div id="timerO" class="timer">O: 0</div>
+    </div>
+    <div id="gameBoard" class="game-board"></div>
+    <h2 id="status"></h2>
+  </div>
+
+  <script>
+    const gameBoard = document.getElementById("gameBoard");
+    const statusDisplay = document.getElementById("status");
+    const timerX = document.getElementById("timerX");
+    const timerO = document.getElementById("timerO");
+    const startBtn = document.getElementById("startBtn");
+
+    let boardSize = 3;
+    let winLength = 3;
+    let timeLimit = 10;
+    let perMove = false; // true for 6×6 & 8×8
+    let gameState = [];
+    let currentPlayer = "X";
+    let gameActive = false;
+    let timerInterval;
+    let timeLeftX = 0;
+    let timeLeftO = 0;
+
+    startBtn.addEventListener("click", () => {
+      const size = parseInt(document.getElementById("boardSize").value);
+      startGame(size);
+    });
+
+    function startGame(size) {
+      boardSize = size;
+      winLength = (size === 3 ? 3 : (size === 6 ? 4 : 5));
+      timeLimit = (size === 3 ? 10 : (size === 6 ? 6 : 10));
+      perMove  = (size !== 3);
+
+      gameActive = true;
+      currentPlayer = "X";
+      gameState = Array(size * size).fill("");
+      gameBoard.innerHTML = "";
+      gameBoard.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      gameBoard.style.gridTemplateRows    = `repeat(${size}, 1fr)`;
+
+      for (let i = 0; i < size * size; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.addEventListener("click", handleCellClick);
+        gameBoard.appendChild(cell);
+      }
+
+      clearInterval(timerInterval);
+      timeLeftX = timeLimit;
+      timeLeftO = timeLimit;
+      updateTimerDisplay();
+      startTimer();
+      statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    function handleCellClick(e) {
+      const index = e.target.dataset.index;
+      if (!gameActive || gameState[index] !== "") return;
+
+      const mover = currentPlayer;         // who just played
+      gameState[index] = mover;
+      e.target.textContent = mover;
+
+      // ✅ Immediately reset the mover's clock in per-move modes
+      if (perMove) {
+        if (mover === "X") timeLeftX = timeLimit;
+        else               timeLeftO = timeLimit;
+        updateTimerDisplay();
+      }
+
+      // Check win/draw after the move
+      if (checkWinner(mover)) {
+        statusDisplay.textContent = `Player ${mover} wins!`;
+        gameActive = false;
+        clearInterval(timerInterval);
+        return;
+      }
+      if (!gameState.includes("")) {
+        statusDisplay.textContent = "It's a draw!";
+        gameActive = false;
+        clearInterval(timerInterval);
+        return;
+      }
+
+      // Switch to the other player and start their fresh clock (per-move)
+      currentPlayer = mover === "X" ? "O" : "X";
+      statusDisplay.textContent = `Player ${currentPlayer}'s turn`;
+
+      clearInterval(timerInterval);
+      if (perMove) {
+        if (currentPlayer === "X") timeLeftX = timeLimit;
+        else                       timeLeftO = timeLimit;
+      }
+      updateTimerDisplay();
+      startTimer();
+    }
+
+    function checkWinner(player) {
+      const directions = [{x:1,y:0},{x:0,y:1},{x:1,y:1},{x:1,y:-1}];
+      for (let row=0; row<boardSize; row++) {
+        for (let col=0; col<boardSize; col++) {
+          if (gameState[row*boardSize+col] !== player) continue;
+          for (let d of directions) {
+            let count=1;
+            let cells=[row*boardSize+col];
+            let r=row+d.y, c=col+d.x;
+            while(r>=0 && r<boardSize && c>=0 && c<boardSize &&
+                  gameState[r*boardSize+c]===player) {
+              cells.push(r*boardSize+c);
+              count++; r+=d.y; c+=d.x;
+            }
+            if (count>=winLength) {
+              cells.forEach(i=>{
+                const el = document.querySelector(`[data-index='${i}']`);
+                if (el) el.classList.add("winner");
+              });
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gameActive) return;
+        if (currentPlayer === "X") {
+          timeLeftX--;
+          if (timeLeftX <= 0) {
+            statusDisplay.textContent = "Player O wins (time out)!";
+            gameActive = false;
+            clearInterval(timerInterval);
+          }
+        } else {
+          timeLeftO--;
+          if (timeLeftO <= 0) {
+            statusDisplay.textContent = "Player X wins (time out)!";
+            gameActive = false;
+            clearInterval(timerInterval);
+          }
+        }
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timerX.textContent = `X: ${timeLeftX}`;
+      timerO.textContent = `O: ${timeLeftO}`;
+      timerX.classList.toggle("low-time", timeLeftX <= 3);
+      timerO.classList.toggle("low-time", timeLeftO <= 3);
+    }
+  </script>
+</body>
+</html>
