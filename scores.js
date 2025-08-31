@@ -1,6 +1,7 @@
-require("dotenv").config();
-const fs = require("fs");   // <-- add this line
+const fs = require("fs");  // load built-ins first
 const TelegramBot = require("node-telegram-bot-api");
+require("dotenv").config(); // load env last
+
 
 
 // ✅ secure way (reads from .env)
