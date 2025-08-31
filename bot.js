@@ -1,17 +1,17 @@
 require("dotenv").config();
+const fs = require("fs");   // ✅ Import File System
 const TelegramBot = require("node-telegram-bot-api");
 
-// ✅ secure way (reads from .env)
+// secure way (reads from .env or Render Environment Variable)
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
-
 
 let games = {}; // Store active games
 let scores = {}; // Load scores
 
-// Load scores
+// Load scores from file if exists
 if (fs.existsSync("scores.json")) {
-  scores = JSON.parse(fs.readFileSync("scores.json"));
+  scores = JSON.parse(fs.readFileSync("scores.json", "utf-8"));
 }
 
 // Save scores
@@ -377,4 +377,3 @@ Type *any play command* to begin!
   `;
   bot.sendMessage(chatId, intro, { parse_mode: "Markdown" });
 });
-
