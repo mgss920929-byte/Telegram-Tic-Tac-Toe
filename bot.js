@@ -4,11 +4,13 @@ const TelegramBot = require("node-telegram-bot-api");
 
 // ✅ secure way (reads from .env or Render Environment Variable)
 const token = process.env.BOT_TOKEN;
+
+// 🔍 Debug line: check if BOT_TOKEN is loaded
+console.log("BOT_TOKEN:", token);
+
 const bot = new TelegramBot(token, { polling: true });
 
-
-
-let games = {}; // Store active games
+let games = {};  // Store active games
 let scores = {}; // Load scores
 
 // Load scores
