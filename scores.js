@@ -1,17 +1,11 @@
-require("dotenv").config(); // load .env variables
+require("dotenv").config();
+const fs = require("fs");   // <-- add this line
 const TelegramBot = require("node-telegram-bot-api");
-const fs = require("fs");
 
-// ✅ Load token safely
+
+// ✅ secure way (reads from .env)
 const token = process.env.BOT_TOKEN;
-if (!token) {
-  console.error("❌ BOT_TOKEN is missing! Please set it in your .env file.");
-  process.exit(1);
-}
-
-// ✅ Start bot
 const bot = new TelegramBot(token, { polling: true });
-console.log("🤖 TicTacToe bot started. Waiting for commands...");
 
 // Scores file path
 const SCORES_FILE = "scores.json";
@@ -46,7 +40,7 @@ function ensurePlayer(user, groupId = null) {
   saveScores(scores);
 }
 
-// ---------------- UPDATE STATS ----------------
+// ---------------- UPDATE STATS AFTER GAME ----------------
 function updateStats(winner, loser, groupId, isDraw = false) {
   let scores = loadScores();
 
