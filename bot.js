@@ -1,5 +1,5 @@
-require("dotenv").config();
-const fs = require("fs");   // ✅ ADD THIS LINE
+const fs = require("fs");                       // ✅ Import fs first
+require("dotenv").config();                     // ✅ Load environment variables
 const TelegramBot = require("node-telegram-bot-api");
 
 // ✅ secure way (reads from .env or Render Environment Variable)
