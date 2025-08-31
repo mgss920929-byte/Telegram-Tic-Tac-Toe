@@ -1,0 +1,92 @@
+{
+  "players": {
+    "6312328668": {
+      "name": "Jung seo",
+      "wins": 0,
+      "losses": 0,
+      "draws": 0,
+      "groups": {
+        "-1002150550707": {
+          "wins": 0,
+          "losses": 0,
+          "draws": 0
+        },
+        "6312328668": {
+          "wins": 0,
+          "losses": 0,
+          "draws": 0
+        }
+      }
+    }
+  },
+  "6781114050": {
+    "wins": 1,
+    "draws": 0,
+    "losses": 0,
+    "name": "",
+    "groups": {
+      "-1002769034318": {
+        "wins": 1,
+        "draws": 0,
+        "losses": 0
+      }
+    }
+  },
+  "6312328668": {
+    "wins": 3,
+    "draws": 1,
+    "losses": 3,
+    "name": "",
+    "groups": {
+      "-1002769034318": {
+        "wins": 1,
+        "draws": 1,
+        "losses": 2
+      },
+      "-1002150550707": {
+        "wins": 2,
+        "draws": 0,
+        "losses": 1
+      }
+    }
+  },
+  "8206655706": {
+    "wins": 1,
+    "draws": 0,
+    "losses": 2,
+    "name": "",
+    "groups": {
+      "-1002150550707": {
+        "wins": 1,
+        "draws": 0,
+        "losses": 2
+      }
+    }
+  },
+  "5539469020": {
+    "wins": 0,
+    "draws": 0,
+    "losses": 1,
+    "name": "",
+    "groups": {
+      "-1002769034318": {
+        "wins": 0,
+        "draws": 0,
+        "losses": 1
+      }
+    }
+  },
+  "8442518116": {
+    "wins": 1,
+    "draws": 1,
+    "losses": 0,
+    "name": "",
+    "groups": {
+      "-1002769034318": {
+        "wins": 1,
+        "draws": 1,
+        "losses": 0
+      }
+    }
+  }
+}
