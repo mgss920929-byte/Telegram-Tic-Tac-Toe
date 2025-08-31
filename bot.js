@@ -1,9 +1,11 @@
 require("dotenv").config();
+const fs = require("fs");   // ✅ ADD THIS LINE
 const TelegramBot = require("node-telegram-bot-api");
 
-// ✅ secure way (reads from .env)
+// ✅ secure way (reads from .env or Render Environment Variable)
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
+
 
 
 let games = {}; // Store active games
