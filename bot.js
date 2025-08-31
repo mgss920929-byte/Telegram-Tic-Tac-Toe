@@ -1,16 +1,12 @@
-const fs = require("fs");                       // ✅ Import fs first
-require("dotenv").config();                     // ✅ Load environment variables
+require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 
-// ✅ secure way (reads from .env or Render Environment Variable)
+// ✅ secure way (reads from .env)
 const token = process.env.BOT_TOKEN;
-
-// 🔍 Debug line: check if BOT_TOKEN is loaded
-console.log("BOT_TOKEN:", token);
-
 const bot = new TelegramBot(token, { polling: true });
 
-let games = {};  // Store active games
+
+let games = {}; // Store active games
 let scores = {}; // Load scores
 
 // Load scores
@@ -360,7 +356,6 @@ bot.onText(/\/start/, (msg) => {
 👋 Hello *${msg.from.first_name || "Player"}*!
 
 Welcome to 🎮 *Tic Tac Toe Bot*.
-
 Here’s what I can do:
 
 ⚡ *Play Tic Tac Toe* with your friends right here in Telegram  
@@ -382,3 +377,4 @@ Type *any play command* to begin!
   `;
   bot.sendMessage(chatId, intro, { parse_mode: "Markdown" });
 });
+
