@@ -1,7 +1,6 @@
-const fs = require("fs");  // load built-ins first
+require("dotenv").config();
+const fs = require("fs");   // ✅ Import File System
 const TelegramBot = require("node-telegram-bot-api");
-require("dotenv").config(); // load env last
-
 
 
 // ✅ secure way (reads from .env)
